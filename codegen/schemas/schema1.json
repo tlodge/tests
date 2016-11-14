@@ -1,0 +1,68 @@
+{
+	"output":{
+		"msg": {
+			"type": "object",
+			"description": "the container object",
+			"schema": {
+
+				"name":  {
+					"type": "string", 
+					"description": "the name of the node, defaults to 'sensingkit'"
+				},
+
+				"id": {
+					"type": "string", 
+					"description": "<i>[id]</i>"
+				},
+
+				"type":  {
+					"type": "string", 
+					"description": "<i>sensingkit</i>"
+				},
+
+				"sensor": {
+					"type":"string", 
+					"description": "<i>${sensor}</i>"
+				},
+
+				"payload": { 
+					"type":"object", 
+					"description": "the message payload", 
+					"schema": {	
+						"ts": {
+								"type":"time", 
+								"description": "a unix timestamp"
+						},
+						"name":  {
+								"type":"string",
+								"description": "user assigned name of the device, 'none' if not provided"
+						},
+						"address": {
+								"type":"string",
+								"description": "the mac address of the device in the form aa:bb:cc:dd:ee:ff"
+						},
+						"rssi": {
+								"type":"numeric", 
+								"description": "received signal strength indicator (a measure of the signal strength measured by the scanning device)"
+						},
+						"somethingelse":{
+							"type":"object",
+							"description": "more nested data",
+							"schema":
+							{
+								"age":{
+									"type": "numeric",
+									"description":"a persons age"
+								},
+								"significance":{
+									"type": "string",
+									"description":"your significance"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
