@@ -1,9 +1,122 @@
 {
+	"input":{
+		"type":"object",
+		"properties":{		
+			"sourceId": {
+				"type":"string",  
+				"description": "<i>[selectedid]</i>"
+			},
+			"type": {
+				"type":"string",
+				"description": "one of either 'text', 'gauge', 'bar' or 'list'",
+				"enum":["text","gauge","bar","list"]
+			},
+			"payload": {
+				"type": "object",
+				"description": "the message payload", 
+				"oneOf":[
+					{
+						"type":"object",
+						"description" : "format for gauge chart",
+						"properties":{
+							"options": { 
+									"type": "object",
+									"properties" :{
+										"title": 	{"type":"number", "description":"gauge title"},
+										"ticks":  	{"type":"number", "description":"number of values displayed on the gauge"},
+										"min": 		{"type":"number", "description":"minimum value"},
+										"max": 		{"type":"number", "description":"maximum value"},
+										"labels": 	{"type":"string",  "description":"labels along the top of the chart in format name:value,name:value"}
+									}
+							},
+							"values": {
+									"type": "object",
+									"properties" :{
+										"id": 		{"type":"string",  "description":"id of the dataset"},
+										"type":		{"type":"string",  "description":"<i>data</i>"}, 
+										"dataid": 	{"type":"string",  "description":"id of the data item (eg timestamp)"}, 
+										"x":		{"type":"number", "description":"value being measured"}
+									}
+							}
+						}
+					},
+					
+					{
+						"type":"object",
+						"description" : "format for bar graph",
+						"properties":{
+							"options": {
+								"type":"object",
+								"properties": {
+									"title" : 	{"type":"number", "description":"bar graph title"},
+									"ticks":  	{"type":"number", "description":"number of values displayed on the gauge"},
+									"xlabel":  	{"type":"string",  "description":"x-axis label"},
+									"ylabel":  	{"type":"string",  "description":"y-axis label"},
+									"min": 		{"type":"number", "description":"minimum axis value"},
+									"max": 		{"type":"number", "description":"maximum axis value"},
+									"maxreadings":  {"type":"number", "description":"maximum number of readings shown on chart"}
+								}
+							}, 
+
+							"values": {
+								"type":"object",
+								"properties":{
+									"id": 		{"type":"string",  "description":"id of the dataset"},
+									"type":		{"type":"string",  "description":"<i>data</i>"}, 
+									"dataid": 	{"type":"string",  "description":"id of the data item (eg timestamp)"}, 
+									"x":		{"type":"number", "description":"x value"},
+									"y":		{"type":"number", "description":"y value"}
+								},
+								 "required": ["id", "type", "dataid", "x", "y"]
+							}
+						},
+						"required":["values"]	
+					},
+					{						
+						"type":"object",
+						"description" : "format for text",
+						"properties":{
+							"values":{
+								"type": "string",
+								"description": "some text"
+							}
+						}	
+					},
+					{
+						"type":"object",
+						"description" : "format for list",
+						"properties":{
+							"values": {
+								"type": "object",
+								"properties":{
+									"timestamp": {
+										"type":"ts", 
+										"description":"a unix timestamp"
+									}, 
+									"keys": {
+										"type":"array",
+										"description":"['key1','key2', '..']"
+									}, 
+									"rows":{
+										"type": "object",
+										"properties":{
+											"key": {"type":"string", "description":"key value pair where key matches key in keys array"}
+										}
+									}
+								}
+							}
+						}			
+					}
+				]
+			}
+		}
+	},
+	
 	"output":{
 		"msg": {
 			"type": "object",
 			"description": "the container object",
-			"schema": {
+			"properties": {
 
 				"name":  {
 					"type": "string", 
@@ -28,30 +141,30 @@
 				"payload": { 
 					"type":"object", 
 					"description": "the message payload", 
-					"schema": {	
+					"properties": {	
 						"ts": {
-								"type":"time", 
-								"description": "a unix timestamp"
+							"type":"time", 
+							"description": "a unix timestamp"
 						},
 						"name":  {
-								"type":"string",
-								"description": "user assigned name of the device, 'none' if not provided"
+							"type":"string",
+							"description": "user assigned name of the device, 'none' if not provided"
 						},
 						"address": {
-								"type":"string",
-								"description": "the mac address of the device in the form aa:bb:cc:dd:ee:ff"
+							"type":"string",
+							"description": "the mac address of the device in the form aa:bb:cc:dd:ee:ff"
 						},
 						"rssi": {
-								"type":"numeric", 
-								"description": "received signal strength indicator (a measure of the signal strength measured by the scanning device)"
+							"type":"number", 
+							"description": "received signal strength indicator (a measure of the signal strength measured by the scanning device)"
 						},
 						"somethingelse":{
 							"type":"object",
 							"description": "more nested data",
-							"schema":
+							"properties":
 							{
 								"age":{
-									"type": "numeric",
+									"type": "number",
 									"description":"a persons age"
 								},
 								"significance":{
