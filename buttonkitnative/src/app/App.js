@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import configureStore from './store/configureStore';
 import { createSwitchNavigator, createStackNavigator, createBottomTabNavigator } from 'react-navigation';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View, AsyncStorage } from 'react-native';
 import { Provider } from 'react-redux'
 import ButtonView from '../features/buttons/components/ButtonView';
 import LoginView from '../features/login/components/LoginView';
@@ -24,6 +24,9 @@ const instructions = Platform.select({
   android: 'Double tap R on your keyboard to reload,\n' +
     'Shake or press menu button for dev menu',
 });
+
+
+
 
 type Props = {};
 class HomeScreen extends Component<Props> {
@@ -45,20 +48,29 @@ class HomeScreen extends Component<Props> {
 }
 
 class SettingsScreen extends React.Component {
+  logout() {
+    AsyncStorage.removeItem('sessionToken', () => { });
+  }
+
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Settings!</Text>
+        <Text onPress={this.logout}>Settings!</Text>
       </View>
     );
   }
 }
 
 class MessagesScreen extends React.Component {
+
+  logout() {
+    AsyncStorage.removeItem('sessionToken', () => { });
+  }
+
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Messages!</Text>
+        <Text onPress={this.logout}>Messages!</Text>
       </View>
     );
   }

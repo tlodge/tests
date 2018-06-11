@@ -12,17 +12,18 @@ const t = require('tcomb-form-native');
 const Form = t.form.Form
 
 const newUser = t.struct({
-    username: t.String,
-    password: t.String
+    email: t.String,
+    token: t.String
 })
 
 const options = {
     fields: {
-        username: {
+        email: {
             autoCapitalize: 'none',
-            autoCorrect: false
+            autoCorrect: false,
+            error: 'Insert a valid email'
         },
-        password: {
+        token: {
             autoCapitalize: 'none',
             password: true,
             autoCorrect: false
@@ -36,8 +37,8 @@ class LoginView extends Component {
         super(props)
         this.state = {
             value: {
-                username: '',
-                password: ''
+                email: '',
+                token: ''
             }
         }
     }
@@ -45,10 +46,14 @@ class LoginView extends Component {
     componentWillUnmount() {
         this.setState = {
             value: {
-                username: '',
-                password: null
+                email: '',
+                token: null
             }
         }
+    }
+
+    _validate = (value) => {
+        return value && value.email && value.token;
     }
 
     _onChange = (value) => {
@@ -60,10 +65,12 @@ class LoginView extends Component {
     _handleAdd = () => {
         const value = this.refs.form.getValue();
         // If the form is valid...
-        if (value) {
+
+
+        if (this._validate(value)) {
             const data = {
-                username: value.username,
-                password: value.password,
+                email: value.email,
+                token: value.token,
             }
             // Serialize and post the data
             const json = JSON.stringify(data);
@@ -76,10 +83,13 @@ class LoginView extends Component {
                 body: json
             })
                 .then((response) => response.json())
-                .then(() => {
-                    AsyncStorage.setItem('jwt', 'sadjsaldsaldsajdlsadl', () => {
-                        this.props.navigation.navigate('Root');
-                    });
+                .then((json) => {
+                    if (json && json.success) {
+                        console.log("saving sessionToken", json.sessionToken);
+                        AsyncStorage.setItem('sessionToken', json.sessionToken, () => {
+                            this.props.navigation.navigate('App');
+                        });
+                    }
                     // Redirect to home screen
                     //this.props.navigator.pop();
 

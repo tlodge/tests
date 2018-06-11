@@ -52,10 +52,9 @@ export default function reducer(state: State = initialState, action: any = {}): 
   switch (action.type) {
 
     case LOAD_BUTTONS:
-      const categories = Object.keys(action.buttons).reduce((acc, key) => {
-        const button = action.buttons[key];
-        acc[button.category] = acc[button.category] || { category: button.category, buttons: [] };
-        acc[button.category].buttons = [...acc[button.category].buttons, button];
+
+      const categories = action.buttons.reduce((acc, button) => {
+        acc[button.category] = button;
         return acc;
       }, []);
 
@@ -104,12 +103,13 @@ function fetchButtons() {
 
     //dispatch(loadButtons(testbuttons));
     dispatch(fetchingButtons());
-    console.log("getc butpons!");
-    get('http://127.0.0.1:8080/buttonstore/buttons.json').then((body) => {
-      console.log("nice, hav buttons", body.buttons);
-      dispatch(loadButtons(body.buttons));
+
+    //get('http://127.0.0.1:8080/buttonstore/buttons.json').then((body) => {
+    get('http://127.0.0.1:8080/panel/buttons').then((body) => {
+      console.log(body);
+      dispatch(loadButtons(body));
     }).catch((err) => {
-      console.log("Seen a network error!!");
+      console.log("Seen a network error!!", err);
       throw err;
     });
   }
