@@ -14,6 +14,8 @@ import LoginView from '../features/login/components/LoginView';
 import AuthLoadingScreen from '../features/login/components/AuthLoadingScreen';
 import QuestionManager from '../features/questions/components/QuestionManager';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import NavigationService from '../utils/navigation/NavigationService';
+
 console.disableYellowBox = true;
 
 const store = configureStore();
@@ -49,7 +51,9 @@ class HomeScreen extends Component<Props> {
 
 class SettingsScreen extends React.Component {
   logout() {
-    AsyncStorage.removeItem('sessionToken', () => { });
+    AsyncStorage.removeItem('sessionToken', () => {
+      NavigationService.navigate('Auth', {});
+    });
   }
 
   render() {
@@ -64,7 +68,9 @@ class SettingsScreen extends React.Component {
 class MessagesScreen extends React.Component {
 
   logout() {
-    AsyncStorage.removeItem('sessionToken', () => { });
+    AsyncStorage.removeItem('sessionToken', () => {
+      NavigationService.navigate('Auth', {});
+    });
   }
 
   render() {
@@ -127,6 +133,8 @@ const ButtonStack = createStackNavigator(
   }
 )
 
+
+
 const AppStack = createBottomTabNavigator(
   {
     Home: ButtonStack,
@@ -169,16 +177,6 @@ const AuthStack = createStackNavigator(
     SignIn: LoginView,
   }
 )
-
-/*const AppStack = createStackNavigator(
-  {
-    Root: TabStack,
-  },
-  {
-    initialRouteName: 'Root',
-  }
-);*/
-
 const RootStack = createSwitchNavigator(
   {
     AuthLoading: AuthLoadingScreen,
@@ -213,7 +211,9 @@ const styles = StyleSheet.create({
 export default class App extends React.Component {
   render() {
     return <Provider store={store}>
-      <RootStack />
+      <RootStack ref={navigatorRef => {
+        NavigationService.setTopLevelNavigator(navigatorRef);
+      }} />
     </Provider>
   }
 }

@@ -56,7 +56,9 @@ class OptionsQuestion extends React.Component {
 
     render() {
 
-        const { question, answer = [] } = this.props;
+        //const { question, answer = [] } = this.props;
+        const { current } = this.props;
+        const { question, answer = [] } = current;
         const { values: { options } } = question;
         const data = options.map(item => {
             return { key: item, selected: answer.indexOf(item) != -1 }
@@ -73,7 +75,8 @@ class OptionsQuestion extends React.Component {
     }
 
     _answerQuestion(_answer) {
-        const { question, answer = [] } = this.props;
+        const { current } = this.props;
+        const { question, answer = [] } = current;
         if (answer.indexOf(_answer) == -1) {
             this.props.answerQuestion(question.questionId, [...answer, _answer]);
         } else {

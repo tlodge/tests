@@ -4,6 +4,7 @@ import { selector, actionCreators as questionsActions } from '../..';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import OptionsQuestion from '../OptionsQuestion';
+import DatastoreQuestion from '../DatastoreQuestion';
 
 const layoutstyle = StyleSheet.create({
     content: {
@@ -37,6 +38,7 @@ class Unknown extends React.Component {
 
 const renderAs = {
     options: OptionsQuestion,
+    datastoreitem: DatastoreQuestion,
     user: UsersQuestion,
     unknown: Unknown,
 }
@@ -46,14 +48,14 @@ class QuestionManager extends React.Component {
     renderQuestion() {
         const { current, navigation } = this.props;
         const buttonId = navigation.getParam("buttonId");
-
+        console.log("current question", JSON.stringify(current.question, null, 4));
         const $component = renderAs[current.question.type] || renderAs["unknown"];
 
         const answerQuestion = (questionId, answer) => {
             this.props.actions.answerQuestion(buttonId, questionId, answer);
         }
 
-        return <$component {...{ answerQuestion, answer: current.answer, question: current.question, navigation }} />;
+        return <$component {...{ answerQuestion, navigation }} />;
     }
 
     render() {

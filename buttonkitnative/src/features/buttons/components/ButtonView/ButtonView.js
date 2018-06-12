@@ -6,7 +6,7 @@ import { actionCreators as buttonsActions, selector } from '../..';
 
 import ButtonsLayout from '../ButtonsLayout';
 import QuestionManager from '../../../questions/components/QuestionManager';
-import { Text, View, Button } from 'react-native';
+import { Text, View, Button, AsyncStorage } from 'react-native';
 
 //@connect(selector, (dispatch) => ({
 //    actions: bindActionCreators(buttonsActions, dispatch)
@@ -15,8 +15,17 @@ class ButtonView extends Component {
 
     constructor(props, context) {
         super(props, context);
-        this.props.actions.fetchButtons();
-        //this.renderButton = this.renderButton.bind(this);
+    }
+
+    componentDidMount() {
+        console.log("Button view - component did mount!")
+        AsyncStorage.getItem('sessionToken', (err, userToken) => {
+            if (err || !userToken) {
+                this.props.navigation.navigate('Auth');
+            } else {
+                this.props.actions.fetchButtons();
+            }
+        });
     }
 
     renderActionButton(button) {
