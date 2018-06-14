@@ -2,8 +2,7 @@ import { Text, View, FlatList, StyleSheet, TouchableOpacity } from 'react-native
 import React, { Component, PropTypes } from 'react';
 import { selector } from '../..';
 import { connect } from 'react-redux';
-
-
+import Question from '../Question';
 
 const layoutstyle = StyleSheet.create({
     content: {
@@ -20,7 +19,7 @@ const layoutstyle = StyleSheet.create({
     }
 })
 
-class Option extends React.Component {
+export default class Option extends Question {
 
     render() {
         const optionstyle = StyleSheet.create({
@@ -85,6 +84,6 @@ class OptionsQuestion extends React.Component {
     }
 }
 
-export default connect(selector, (dispatch) => ({
+/*export default connect(selector, (dispatch) => ({
 
-}))(OptionsQuestion);
+}), null, { withRef: true })(OptionsQuestion);*/

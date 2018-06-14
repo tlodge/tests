@@ -5,6 +5,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import OptionsQuestion from '../OptionsQuestion';
 import DatastoreQuestion from '../DatastoreQuestion';
+import SignatureQuestion from '../SignatureQuestion';
+
+import Unknown from '../Unknown';
 
 const layoutstyle = StyleSheet.create({
     content: {
@@ -13,12 +16,13 @@ const layoutstyle = StyleSheet.create({
         width: "100%",
     },
     footer: {
+
         flex: -1,
+        flexDirection: 'row',
         height: 60,
+        width: "100%",
         backgroundColor: "#d35a51",
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
+    },
 })
 
 class UsersQuestion extends React.Component {
@@ -30,20 +34,35 @@ class UsersQuestion extends React.Component {
     }
 }
 
-class Unknown extends React.Component {
-    render() {
-        return <Text>{JSON.stringify(this.props)}</Text>
-    }
+const wrap = (component) => {
+    return connect(selector, (dispatch) => ({
+        actions: bindActionCreators(questionsActions, dispatch)
+    }), null, { withRef: true })(component);
 }
 
 const renderAs = {
-    options: OptionsQuestion,
-    datastoreitem: DatastoreQuestion,
-    user: UsersQuestion,
-    unknown: Unknown,
+    options: wrap(OptionsQuestion),
+    datastoreitem: wrap(DatastoreQuestion),
+    user: wrap(UsersQuestion),
+    signature: wrap(SignatureQuestion),
+    unknown: wrap(Unknown),
 }
 
+
+
 class QuestionManager extends React.Component {
+
+    /* overidden method */
+    constructor(props) {
+        super(props);
+        this._submitPressed = this._submitPressed.bind(this);
+    }
+
+    _submitPressed() {
+        const { navigation } = this.props;
+        const buttonId = navigation.getParam("buttonId");
+        this.refs.current.getWrappedInstance().onSubmit(this.props.actions.submit.bind(null, buttonId));
+    }
 
     renderQuestion() {
         const { current, navigation } = this.props;
@@ -55,15 +74,43 @@ class QuestionManager extends React.Component {
             this.props.actions.answerQuestion(buttonId, questionId, answer);
         }
 
-        return <$component {...{ answerQuestion, navigation }} />;
+        return <$component ref="current" {...{ answerQuestion, navigation }} />;
     }
 
-    render() {
+    renderFooter() {
 
         const { current, navigation } = this.props;
         const buttonId = navigation.getParam("buttonId");
-        const more = current.next != navigation.getParam("questionIndex");
+        const next = current.next != navigation.getParam("questionIndex");
 
+        const footeritems = [
+            { label: "submit", value: true /*current.complete*/, onPress: () => { this._submitPressed() } },
+            { label: "next", value: next, onPress: () => this.props.navigation.push("QuestionNavigator", { buttonId, questionIndex: current.next || 0 }) },
+        ]
+
+        const filtered = footeritems.filter(i => i.value)
+        const width = `${Math.floor(100 / filtered.length)}%`;
+
+        const _itemstyle = {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            borderStyle: "solid",
+            borderColor: "white",
+        }
+        const items = filtered.map((item, i) => {
+            const itemstyle = { ..._itemstyle, borderRightWidth: i != filtered.length - 1 ? 1 : 0 }
+            return <TouchableOpacity key={i} style={itemstyle} onPress={item.onPress} ><Text style={{ color: "white" }}>{item.label}</Text></TouchableOpacity>
+        });
+
+        return items.length > 0 && (<View style={layoutstyle.footer}>
+            <View style={{ flex: 1, flexDirection: "row" }}>
+                {items}
+            </View>
+        </View>)
+    }
+
+    render() {
         return (
             <View >
 
@@ -71,13 +118,11 @@ class QuestionManager extends React.Component {
                     <View style={layoutstyle.content}>
                         {this.renderQuestion()}
                     </View>
-                    {more && <TouchableOpacity onPress={() => {
+                    {this.renderFooter()}
 
-                        this.props.navigation.push("QuestionNavigator", { buttonId, questionIndex: current.next || 0 });
-
-                    }} style={layoutstyle.footer}><Text style={{ color: "white" }}>NEXT</Text></TouchableOpacity>}
                 </View>
-            </View>
+
+            </View >
         );
     }
 }
