@@ -6,6 +6,8 @@ import { bindActionCreators } from 'redux';
 import OptionsQuestion from '../OptionsQuestion';
 import DatastoreQuestion from '../DatastoreQuestion';
 import SignatureQuestion from '../SignatureQuestion';
+import UserQuestion from '../UserQuestion';
+import ServerFunctionQuestion from '../ServerFunctionQuestion';
 
 import Unknown from '../Unknown';
 
@@ -43,8 +45,9 @@ const wrap = (component) => {
 const renderAs = {
     options: wrap(OptionsQuestion),
     datastoreitem: wrap(DatastoreQuestion),
-    user: wrap(UsersQuestion),
+    user: wrap(UserQuestion),
     signature: wrap(SignatureQuestion),
+    serverfunction: wrap(ServerFunctionQuestion),
     unknown: wrap(Unknown),
 }
 
@@ -84,7 +87,7 @@ class QuestionManager extends React.Component {
         const next = current.next != navigation.getParam("questionIndex");
 
         const footeritems = [
-            { label: "submit", value: true /*current.complete*/, onPress: () => { this._submitPressed() } },
+            { label: "submit", value: current.complete, onPress: () => { this._submitPressed() } },
             { label: "next", value: next, onPress: () => this.props.navigation.push("QuestionNavigator", { buttonId, questionIndex: current.next || 0 }) },
         ]
 

@@ -19,13 +19,13 @@ const layoutstyle = StyleSheet.create({
     }
 })
 
-export default class Option extends Question {
+class Option extends Question {
 
     render() {
         const optionstyle = StyleSheet.create({
             cell: {
                 justifyContent: 'center',
-                backgroundColor: this.props.selected ? "#d35a51" : "white",
+                backgroundColor: this.props.selected ? "#1976D2" : "white",
                 padding: 0,
                 alignItems: 'center',
                 width: "100%",
@@ -46,7 +46,7 @@ export default class Option extends Question {
     }
 }
 
-class OptionsQuestion extends React.Component {
+export default class OptionsQuestion extends React.Component {
 
     constructor(props) {
         super(props);
